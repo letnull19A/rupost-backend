@@ -14,21 +14,20 @@ export class UserService {
   }
 
   async findOne(id): Promise<User> {
-    return await this.userRepository.findOneBy({id: id})
+    return await this.userRepository.findOneBy({ id: id });
   }
 
   async findByLogin(login: string): Promise<User> {
     return await this.userRepository.findOneBy({
-      email: login
-    })
+      email: login,
+    });
   }
 
   async deleteById(id: string): Promise<void> {
-   const currentUser = await this.findOne(id)
+    const currentUser = await this.findOne(id);
 
-   if (!currentUser) 
-     throw new Error('user not found')
+    if (!currentUser) throw new Error('user not found');
 
-   await currentUser.remove()
+    await currentUser.remove();
   }
 }
