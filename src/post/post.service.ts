@@ -14,15 +14,16 @@ export class PostService {
   }
 
   async findOne(id): Promise<Post> {
-    return await this.PostRepository.findOneBy({ id: id });
+    return await this.PostRepository
+      .findOneBy({ id: id });
   }
-  
+
   async deleteById(id: string): Promise<void> {
-    const currentUser = await this.findOne(id);
+    const currentPost = await this.findOne(id);
 
-    if (!currentUser) throw new Error('user not found');
+    if (!currentPost) throw new Error(' not found');
 
-    await currentUser.remove();
+    await currentPost.remove();
   }
 }
 

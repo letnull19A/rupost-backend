@@ -6,7 +6,9 @@ import {
   Delete,
   Param,
   Bind,
-  Body
+  Body,
+  HttpStatus,
+  HttpException
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto'
 import { Post as Publication } from './post.entity'
@@ -19,8 +21,8 @@ import { UserService } from './../user/user.service'
 export class PostController {
 
   constructor(
-    private postService: PostService,
-    private userService: UserService) {}
+    private readonly postService: PostService,
+    private readonly userService: UserService) {}
 
   @Public()
   @Get()
@@ -36,10 +38,19 @@ export class PostController {
   getById(id: string) {
 
     if (id === undefined || id === '') {
-       throw new Error('id field is empty or undefined')
+       throw new HttpException({'id field is empty or undefined', HttpStatus.BAD_REQUEST)
     }
 
-    return this.postService.findOne(id)
+    const result = this.postService.findOne(id)
+
+    if (result === undefined) {
+       throw new HttpException({
+           status: HttpStatus.NOT_FOUND,
+           message: 'post not found'
+       }, HttpStatus.NOT_FOUND)
+    }
+
+    return result
   }
 
   @Post()
