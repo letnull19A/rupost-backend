@@ -19,11 +19,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() loginDto: LoginDto) {
-    return this.authService.signIn(loginDto.login, loginDto.password);
-  }
-
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+    return this.authService
+      .signIn(loginDto.login, loginDto.password);
   }
 }

@@ -15,6 +15,7 @@ import { User } from './user.entity';
 import { createHash, randomInt } from 'node:crypto';
 import { Public } from './../auth/decorators/public.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { UserDataDto } from './dto/user-data.dto'
 
 @Controller('user')
 export class UserController {
@@ -28,9 +29,8 @@ export class UserController {
   }
 
   @Get()
-  @ApiBearerAuth()
-  async getAll() {
-    const result = this.userService.findAll();
+  @ApiBearerAuth()  async getAll() {
+    const result = await this.userService.findAll();
 
     if (!result)
       throw new HttpException(
@@ -40,6 +40,16 @@ export class UserController {
         },
         HttpStatus.NOT_FOUND,
       );
+
+    const safeUserData = result.map(user => ({
+      id: user.id,
+      name: user.name,
+      surname: user.surname,
+      nickname: user.nickname,
+      email: user.email
+    }))
+
+    return safeUserData
   }
 
   @Post()
@@ -78,6 +88,7 @@ export class UserController {
     return user;
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   async deleteById(@Param('id') id: string): Promise<string> {
     this.userService.deleteById(id);

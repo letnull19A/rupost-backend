@@ -9,9 +9,14 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
+import { PostModule } from './post/post.module';
 
 @Module({
-  imports: [DatabaseModule, UserModule, AuthModule],
+  imports: [
+    DatabaseModule, 
+    UserModule, 
+    AuthModule,
+    PostModule],
   controllers: [
     PostController,
     UserController,

@@ -11,19 +11,32 @@ export class AuthService {
   ) {}
 
   async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.userService.findByLogin(username);
+    const user = await this.userService
+      .findByLogin(username);
 
-    const passwordHash = createHash('sha-256').update(pass).digest('base64');
+    const passwordHash = createHash('sha-256')
+      .update(pass).digest('base64');
 
     if (user?.password !== passwordHash) {
       throw new UnauthorizedException();
     }
 
     const { password, ...result } = user;
-    const payload = { sub: user.id, name: user.name };
+    const payload = { 
+     sub: user.id, 
+     name: user.name 
+    }
+
+    const refreshPayload = {
+     sub: user.id,
+     name: user.name,
+     surname: user.surname,
+     date: Date.now()
+    }
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      refresh_token: await this.jwtService.signAsync(refreshPayload, { expiresIn: '2h' })
     };
   }
 }
