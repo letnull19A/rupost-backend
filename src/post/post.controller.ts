@@ -38,7 +38,10 @@ export class PostController {
   getById(id: string) {
 
     if (id === undefined || id === '') {
-       throw new HttpException({'id field is empty or undefined', HttpStatus.BAD_REQUEST)
+       throw new HttpException({
+        message: 'id field is empty or undefined', 
+        status: HttpStatus.BAD_REQUEST
+       }, HttpStatus.BAD_REQUEST)
     }
 
     const result = this.postService.findOne(id)
@@ -47,7 +50,7 @@ export class PostController {
        throw new HttpException({
            status: HttpStatus.NOT_FOUND,
            message: 'post not found'
-       }, HttpStatus.NOT_FOUND)
+       }, HttpStatus.BAD_REQUEST)
     }
 
     return result
@@ -58,9 +61,13 @@ export class PostController {
   createPost(@Body() post: CreatePostDto) {
 
     const userIsExist = this.userService
-       .findOne(post.user_id) === undefined
+       .findOne(post.user_id) !== undefined
 
-    if (!userIsExist) throw new Error('user not found')
+    if (!userIsExist) 
+       throw new HttpException({
+           message: 'user not found',
+           status: HttpStatus.NOT_FOUND
+       }, HttpStatus.NOT_FOUND) 
 
     const newPost = new Publication()
     newPost.text = post.text
